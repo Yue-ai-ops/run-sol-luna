@@ -1,28 +1,29 @@
-# Run Sol + Luna
+# Run Sol + Budget Worker
 
-由 **Yue** 创建的 Codex 省额度工作流：让 Sol 负责规划、风险判断和最终验收，让 Luna Max 执行边界清晰、可以独立验证的子任务。
+由 **Yue** 创建的 Codex 省额度工作流：让 Sol 负责规划、风险判断和最终验收；优先由 Luna Max 执行边界清晰、可独立验证的子任务，当前任务不支持 Luna 时才明确回退到 Terra medium。
 
 这是 Yue 的个人数字资产，现以 MIT License 向社区开放。
 
 ## 它解决什么问题
 
-当强模型额度有限时，不必把整个任务切换给较弱模型。这个 Skill 会让当前主任务继续担任控制者，只把适合委派的工作交给 Luna Max，再由主任务回看文件、测试和运行证据后给出最终结论。
+当强模型额度有限时，不必把整个任务切换给较弱模型。这个 Skill 会让当前主任务继续担任控制者，只把适合委派的工作交给当前接口实际支持的预算 worker，再由主任务回看文件、测试和运行证据后给出最终结论。
 
 默认策略：
 
 - Sol high 负责常规规划与验收；
-- 1 个 Luna Max worker 负责执行；
+- 1 个 Luna Max worker 优先负责执行；
+- 如果当前任务原生接口拒绝 Luna，才使用 Terra medium，并显式报告 `TERRA_FALLBACK`；
 - 只有两个任务真正独立且分别可验证时，才使用第 2 个 worker；
 - 生产、部署、安全恢复、真实外发和最终高风险裁决不交给 Luna。
 
 ## 使用前提
 
 - 使用支持 Skills 和原生子 Agent 协作的 Codex 版本；
-- 账号或工作区能够使用 `gpt-5.6-luna`；
+- 账号或工作区能够使用原生子 Agent；Luna 可用时使用 `gpt-5.6-luna`，否则只在接口提供 Terra 时回退到 `gpt-5.6-terra / medium`；
 - 主任务模型由使用者自己选择，Skill 不会自动把主模型切换成 Sol；
 - 推荐日常任务选择 Sol high，简单只读任务可用 medium，高风险任务才使用 xhigh。
 
-如果当前任务没有原生子 Agent 工具，Skill 会报告 `PARTIAL` 或 `NOT_VERIFIED`，不会用额外 CLI 进程伪装成 Luna 子 Agent。
+如果当前任务没有原生子 Agent 工具，Skill 会报告 `ROUTE_UNAVAILABLE`、`PARTIAL` 或 `NOT_VERIFIED`，不会用额外 CLI 进程伪装成子 Agent。
 
 ## 安装
 
@@ -31,7 +32,7 @@
 在 Codex 中调用 `$skill-installer`，并让它安装：
 
 ```text
-https://github.com/Yue-ai-ops/run-sol-luna/tree/main/skills/run-sol-luna
+https://github.com/Yue-ai-ops/run-sol-luna/tree/main/skills/run-sol-budget-worker
 ```
 
 ### 手动安装
@@ -39,7 +40,7 @@ https://github.com/Yue-ai-ops/run-sol-luna/tree/main/skills/run-sol-luna
 ```bash
 git clone https://github.com/Yue-ai-ops/run-sol-luna.git
 mkdir -p ~/.agents/skills
-cp -R run-sol-luna/skills/run-sol-luna ~/.agents/skills/run-sol-luna
+cp -R run-sol-luna/skills/run-sol-budget-worker ~/.agents/skills/run-sol-budget-worker
 ```
 
 如果安装后没有立即出现，重启 Codex。
@@ -61,7 +62,7 @@ cp -R run-sol-luna/skills/run-sol-luna ~/.agents/skills/run-sol-luna
 也可以显式调用：
 
 ```text
-$run-sol-luna 修复这个测试失败，完成后由主任务独立验收。
+$run-sol-budget-worker 修复这个测试失败，完成后由主任务独立验收。
 ```
 
 ## 适合的任务
