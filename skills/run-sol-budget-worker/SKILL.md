@@ -1,68 +1,72 @@
 ---
 name: run-sol-budget-worker
-description: Run a budget-aware Sol-plans, bounded-worker-executes, Sol-verifies Codex workflow created by Yue. Prefer Luna Max; when the current native interface does not expose Luna, use Terra medium as an explicit fallback. Use whenever the user invokes `$run-sol-budget-worker` or includes the exact phrase “省额度” in a task request. Do not infer other natural-language triggers.
+description: Run Yue's quota-aware Sol/Luna workflow. Let Luna Max complete most clear, verifiable work directly; use Sol selectively for framing, conflict resolution, risk gates, and high-risk acceptance. Use whenever the user invokes `$run-sol-budget-worker` or includes the exact phrase “省额度” in a task request. Terra is never an automatic fallback.
 ---
 
-# Run Sol + Budget Worker
+# Run Sol + Luna Budget Workflow
 
-Original workflow by **Yue**. Use the current main task as the controller: understand the goal, protect project boundaries, delegate only bounded work to a capability-selected worker, and independently verify the returned result.
+Original workflow by **Yue**. Treat scarce Sol usage as decision bandwidth, not default labor. Prefer the simplest route that can produce a verifiable outcome.
 
-This Skill does not change the main task's model. Rely on the user's model selection for the parent Sol role. If the parent model cannot be inspected, do not claim that it was technically verified and do not add a separate Sol reviewer merely to prove the label.
+This Skill cannot switch the current task's model or force an unavailable child model. Inspect the capabilities exposed in the current task, choose a route honestly, and never simulate delegation with extra CLI processes.
 
-## Choose the parent effort
+## Choose the route
 
-Treat the parent effort as routing guidance, not a hard launch requirement:
+1. **Current task is Luna Max — `LUNA_DIRECT`:** execute Green and Yellow work end to end in the current task. Do not spawn another worker merely to follow an orchestration pattern. Pause only at a Red decision or authorization gate.
+2. **Current task is Sol and native Luna is available — `SOL_PLAN_LUNA_EXEC`:** Sol makes the minimum necessary decisions, gives one Luna Max worker a self-contained task card, and verifies only to the level required by risk.
+3. **Current task is Sol and Luna is rejected or unavailable — `LUNA_UNAVAILABLE`:** do not retry a stable rejection and do not automatically substitute Terra. Finish a small Green task directly only when that is cheaper than rerouting; otherwise recommend continuing in a fresh Luna Max task with a handoff card.
+4. **Terra — `TERRA_EXPLICIT`:** use Terra only when the user explicitly asks for it. Never treat Terra as a cost-equivalent Luna fallback.
 
-- **Sol medium:** use for Green work with objective evidence, such as read-only scans, extraction, report inputs, and repetitive checks.
-- **Sol high:** use as the default for routine Green and Yellow work, including bounded coding, diagnosis, tests, and evidence-backed reporting.
-- **Sol xhigh:** reserve for Red work, long or conflicting context, cross-host or runtime identity, architecture, production, and final high-risk acceptance.
+Do not require Sol xhigh. Sol medium is the normal planning controller; use high for genuine ambiguity or important tradeoffs, and xhigh only for exceptional Red work. If the current model or effort cannot be inspected, report the route without claiming the label was verified.
 
-Do not require xhigh merely to run this Skill. If the current parent is weaker than the recommended tier, narrow the delegated scope and keep uncertain or high-risk judgment unverified; do not stop only to prove a model label.
+## Match the quota posture
 
-## Run the workflow
+- **Healthy weekly quota:** an ambiguous or high-value task may start with one Sol medium planning pass, then move to Luna Max for execution. Do not reserve a second Sol pass unless Yellow uncertainty remains or a Red acceptance gate exists.
+- **Tight weekly quota:** default to `LUNA_DIRECT`. Spend Sol only on an unresolved Yellow decision or Red gate, not on Green planning or duplicate verification.
+- **Emergency or paid-credit bridge:** keep the work in one Luna Max task when safe, avoid parallel agents and optional polish, and defer non-urgent Red work instead of consuming Sol continuously.
+- **Quota unknown:** use the tighter posture. Do not ask about the percentage unless it would change an immediate model decision.
 
-1. Read the applicable project instructions and inspect the current checkout, host, dirty state, and authoritative evidence needed for the request.
-2. Define the goal, acceptance criteria, locked decisions, allowed writes, forbidden actions, and the one next action before delegating.
-3. Classify the work:
-   - **Green:** read-only exploration, evidence extraction, status reconciliation, log analysis, report drafts, repetitive tests, or small mechanical edits with objective verification.
-   - **Yellow:** multi-file implementation, ambiguous diagnosis, shared-state work, or tasks where a wrong result is costly. Delegate only independent supporting slices; keep integration and judgment in the parent.
-   - **Red:** architecture decisions, host or runtime identity, canonical state transitions, production, deployment, restart, security recovery, secrets, irreversible actions, real external communication, or final acceptance. Keep decisions and writes in the parent; delegate only clearly separable read-only evidence work when useful.
-4. Skip delegation when the task is trivial, tightly coupled, or the next parent action depends immediately on the same work.
-5. Spawn one worker by default. Use a second only when there are two genuinely independent scopes, parallel execution saves meaningful time, and the parent can verify both without duplicated work. Never use more than two. For trivial or tightly coupled work, complete it directly under the parent even though the Skill was triggered. Use only the native subagent collaboration tools exposed to the current parent task. Never launch Codex CLI processes or shell commands as a delegation workaround.
-6. Apply the capability gate before delegation:
-   - If the native subagent interface exposes `gpt-5.6-luna`, use **Luna Max** (`gpt-5.6-luna`, `max`) and mark the route `LUNA_ACTIVE`.
-   - If Luna is absent or the interface rejects it while explicitly listing only Sol/Terra, use **Terra medium** (`gpt-5.6-terra`, `medium`) and mark the route `TERRA_FALLBACK`.
-   - Never use Terra high, xhigh, max, or ultra as a Luna substitute. Terra fallback preserves a bounded execution lane; it does not imply Luna-level cost savings.
-   - When the parent is Sol medium, use Terra fallback only when independent parallel work has clear value; otherwise keep the bounded task in the parent rather than paying for a second mid-tier worker.
-   - Do not retry a stable Luna model-rejection. If neither Luna nor Terra is available, report `ROUTE_UNAVAILABLE` with `PARTIAL` or `NOT_VERIFIED`; do not simulate delegation.
-7. Start workers without prior conversation context when supported and provide a self-contained task card.
-8. Give each worker:
-   - one concrete objective and objective acceptance criteria;
-   - exact allowed files, commands, and write scope;
-   - explicit forbidden actions and stop conditions;
-   - a disjoint scope when another worker runs in parallel;
-   - an output contract of at most 10 lines or one compact table.
-9. Do not reveal hidden evaluation answers to a worker. Do not retry a wrong model answer merely to obtain a passing result; retry only a genuine tool or path failure.
-10. While workers run, perform non-overlapping controller work. Do not duplicate their assigned tasks.
-11. Independently verify every material worker claim against current files, Git state, tests, receipts, or runtime evidence. Treat subagent completion as a claim, not verification.
-12. Close completed subagents. Return one consolidated answer; do not dump raw worker transcripts.
+## Classify by risk
 
-## Write discipline
+- **Green:** extraction, status audit, documentation, reports, repetitive checks, log review, fixed tests, browser data entry, and small mechanical edits with objective evidence. Luna may execute and self-verify fully; Sol must not repeat the work.
+- **Yellow:** bounded multi-file implementation, diagnosis, browser or remote workflows, service integration, and reversible changes with explicit acceptance criteria. Luna normally executes end to end. Sol checks only locked decisions, critical evidence, and unresolved conflicts; it does not independently redo every step.
+- **Red:** architecture commitments, host or runtime identity under conflicting evidence, canonical state transitions, production deployment or restart, security recovery, secrets, irreversible actions, consequential external communication, and final high-risk acceptance. Sol owns the decision and final acceptance. Luna may collect evidence, prepare changes, run reversible tests, and draft outputs within exact limits.
 
-- Permit the selected worker to edit only when the user asked for implementation, the change is reversible, and the write scope is exact and disjoint.
-- Keep shared handoffs, canonical state, deployment controls, and final integration under one parent writer.
-- Preserve user-owned dirty work and unrelated changes.
-- Inherit the parent sandbox and approval boundaries; never widen authority for a child.
-- Stop for any required approval, secret, production action, external send, evidence conflict, or scope expansion.
+The label follows the riskiest unresolved step, not the size or length of the task.
+
+## Run lean
+
+1. Read applicable project instructions and enough current evidence to avoid wrong-host, wrong-project, or dirty-worktree mistakes.
+2. Make one task card, no longer than six lines:
+
+```text
+Goal and done condition:
+Known facts and locked decisions:
+Allowed tools, files, host, and writes:
+Forbidden actions and approval gates:
+Evidence required at completion:
+Stop or escalate when:
+```
+
+3. In `LUNA_DIRECT`, use the card internally and proceed. In `SOL_PLAN_LUNA_EXEC`, spawn one fresh Luna Max worker (`gpt-5.6-luna`, `max`) with the card. Use a second worker only for a genuinely independent scope that saves meaningful time; never use more than two.
+4. Permit writes only when the user requested implementation, the target is exact, and the change is recoverable. Preserve unrelated user work. Never widen inherited permissions.
+5. Verify with the cheapest decisive evidence: current files, focused tests, Git diff, execution receipts, or visible runtime state. Green requires objective self-verification; Yellow requires targeted Sol spot-checking when Sol is present; Red requires independent Sol verification.
+6. Retry only real tool, transport, or path failures. Do not rerun a wrong answer to manufacture a pass.
+7. Stop when the stated acceptance criteria pass. Do not add abstractions, process files, broad audits, or optional polish unless they are required for the outcome.
+
+## Communication budget
+
+- Do not narrate every tool call or repeat the Skill explanation.
+- Send an update only when the route is chosen, the state materially changes, user action is needed, a blocker appears, or a risk gate is reached.
+- Keep plans short and outcome-facing. Separate required work from optional improvement.
+- Return one consolidated result, not raw worker transcripts.
 
 ## Reporting
 
-Lead with the verified outcome, what the user can do now, and the actual remaining risk. Then state briefly:
+Lead with what is now usable and what remains unsafe or unverified. Then state briefly:
 
-- what the selected worker handled;
-- which route was used: `LUNA_ACTIVE`, `TERRA_FALLBACK`, or `ROUTE_UNAVAILABLE`;
-- what the parent independently verified;
-- whether the result is `PASS`, `PARTIAL`, `NOT_VERIFIED`, or blocked;
-- the next safe action, only when one remains.
+- route: `LUNA_DIRECT`, `SOL_PLAN_LUNA_EXEC`, `LUNA_UNAVAILABLE`, or `TERRA_EXPLICIT`;
+- what Luna completed and what evidence passed;
+- which narrow judgment or check Sol retained, if any;
+- result: `PASS`, `PARTIAL`, `NOT_VERIFIED`, or blocked.
 
-Do not call internal evidence production-ready, do not promote `NOT_VERIFIED`, `PARTIAL`, `HOLD`, or similar states, and do not equate a passing child result with completed delivery.
+Never promote `NOT_VERIFIED`, `PARTIAL`, `HOLD`, or similar states. A local or test result is not production deployment, and a child completion message is not proof by itself.
