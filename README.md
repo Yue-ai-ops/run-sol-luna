@@ -1,6 +1,6 @@
 # Run Sol + Budget Worker
 
-由 **Yue** 创建的 Codex 额度工作流：把 Luna Max 当作默认执行者，Sol 只处理高价值方案、判断和一次窄审查；额度即将重置时，也只把容量用在已有、已授权且能验收的工作上。目标是获得真实结果，而不是制造编排仪式或为了消耗额度创造工作。
+由 **Yue** 创建的 Codex 额度工作流：把 Luna Max 当作默认执行者；Yue 明确选择时也可由 Terra xhigh 独立执行；Sol 只处理高价值方案、判断和一次窄审查。额度即将重置时，也只把容量用在已有、已授权且能验收的工作上。目标是获得真实结果，而不是制造编排仪式或为了消耗额度创造工作。
 
 这是 Yue 的个人数字资产，现以 MIT License 向社区开放。
 
@@ -9,11 +9,11 @@
 - 当前任务本来就是 Luna Max：直接跑到目标完成，不额外套一层 Agent 或 Sol 复核；
 - 当前任务是 Sol，且原生接口支持 Luna 子 Agent：先生成当前目标的交接，再明确启动 `gpt-5.6-luna + max`；
 - Luna Max 被接口拒绝：不反复重试、不使用其他 Luna 推理档，也不自动改用 Terra；建议直接把当前任务切换到 Luna Max；
-- Terra 只在使用者明确指定时使用；
+- Terra 只在使用者明确指定、或当前任务已经确认是 Terra xhigh 且要求继续时使用；必须是 `gpt-5.6-terra + xhigh`，不会静默换成其他档位；
 - 中大型里程碑、架构决定或高风险验收：可让 Sol 做一次只读窄审查，Luna 仍是执行者；
 - 明确说“额度即将重置”：只冲刺已有 `READY` 高价值任务，不拿低价值清理填满额度。
 
-无论额度充足还是紧张，执行默认交给 Luna Max。Sol high 用于合格的高价值方案、判断或审查，max 只留给最困难或后果重大的单项工作；Ultra 只有在至少两条真正独立的工作流可以并行时才成立，不为普通工作预先设计证据门。
+无论额度充足还是紧张，执行默认交给 Luna Max。Terra xhigh 是 Yue 明确选择的替代执行者，不假定比 Luna Max 更省额度。Sol high 用于合格的高价值方案、判断或审查，max 只留给最困难或后果重大的单项工作；Ultra 只有在至少两条真正独立的工作流可以并行时才成立，不为普通工作预先设计证据门。
 
 ## 为什么这样设计
 
@@ -65,7 +65,7 @@ cp -R run-sol-luna/skills/run-sol-budget-worker ~/.agents/skills/run-sol-budget-
 $run-sol-budget-worker 修复这个测试失败并给出可复核证据。
 ```
 
-Skill 不会自动切换当前任务的主模型、启用 Fast，也不能绕过接口对 Luna 子 Agent 的限制。它只接受 `gpt-5.6-luna + max`，并选择以下八条路线之一：`LUNA_MAX_DIRECT`、`SOL_HANDOFF_TO_LUNA_MAX`、`LUNA_WITH_SOL_ADVICE`、`MODEL_SWITCH_RECOVERY`、`SWITCHBACK_GAP_RECOVERY`、`RESET_WINDOW_SPRINT`、`LUNA_MAX_UNAVAILABLE`、`TERRA_EXPLICIT`。
+Skill 不会自动切换当前任务的主模型、启用 Fast，也不能绕过接口对 Luna 子 Agent 的限制。Luna 路线只接受 `gpt-5.6-luna + max`；Terra 路线只接受 Yue 明确选择的 `gpt-5.6-terra + xhigh`。它选择以下八条路线之一：`LUNA_MAX_DIRECT`、`SOL_HANDOFF_TO_LUNA_MAX`、`LUNA_WITH_SOL_ADVICE`、`MODEL_SWITCH_RECOVERY`、`SWITCHBACK_GAP_RECOVERY`、`RESET_WINDOW_SPRINT`、`LUNA_MAX_UNAVAILABLE`、`TERRA_EXPLICIT`。
 
 ## 额度重置冲刺
 
