@@ -13,6 +13,7 @@ Original workflow by **Yue**. Optimize for a completed user outcome and total co
 - **Budget choice (“省额度”):** consult [model-choices.md](references/model-choices.md). Prefer a proven economical configuration for separable work; do not split tightly coupled tasks solely for a lower advertised model price.
 - **Bounded delegation:** use a native child only when authorized and an independent contribution improves completion time, context use, or total cost. Keep overlapping edits with one writer.
 - **Focused advice:** obtain one material decision or independent milestone review when it will change the next action, not for every edit.
+- **Optional Astra / Sol / Luna combination:** when Yue requests this combination, read the recipe in [model-choices.md](references/model-choices.md). Keep one continuing execution owner; planning, delegation, and final review are conditional help, not four mandatory stages.
 - **Model switch or continuity gap:** read [handoff-recovery.md](references/handoff-recovery.md) for `MODEL_SWITCH_RECOVERY` or `SWITCHBACK_GAP_RECOVERY`.
 - **Reset sprint:** read [reset-window-sprint.md](references/reset-window-sprint.md) when Yue requests “额度即将重置” or otherwise explicitly asks to use expiring capacity. A quotation, hypothetical discussion, or “额度有点少怎么办” does not start a sprint.
 
