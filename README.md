@@ -1,85 +1,42 @@
-# Run Sol + Luna
+# Yue Task Routing · 省额度
 
-由 **Yue** 创建的 Codex 省额度工作流：让 Sol 负责规划、风险判断和最终验收，让 Luna Max 执行边界清晰、可以独立验证的子任务。
+Original workflow by **Yue**. Yue 的个人数字资产，MIT 开源。
 
-这是 Yue 的个人数字资产，现以 MIT License 向社区开放。
+由 `run-sol-budget-worker` / `run-sol-luna` 升级而来。仓库地址不变；Skill 改名为 `yue-task-routing`，以后换模型不再换流程名字。
 
-## 它解决什么问题
+## 怎么用
 
-当强模型额度有限时，不必把整个任务切换给较弱模型。这个 Skill 会让当前主任务继续担任控制者，只把适合委派的工作交给 Luna Max，再由主任务回看文件、测试和运行证据后给出最终结论。
-
-默认策略：
-
-- Sol high 负责常规规划与验收；
-- 1 个 Luna Max worker 负责执行；
-- 只有两个任务真正独立且分别可验证时，才使用第 2 个 worker；
-- 生产、部署、安全恢复、真实外发和最终高风险裁决不交给 Luna。
-
-## 使用前提
-
-- 使用支持 Skills 和原生子 Agent 协作的 Codex 版本；
-- 账号或工作区能够使用 `gpt-5.6-luna`；
-- 主任务模型由使用者自己选择，Skill 不会自动把主模型切换成 Sol；
-- 推荐日常任务选择 Sol high，简单只读任务可用 medium，高风险任务才使用 xhigh。
-
-如果当前任务没有原生子 Agent 工具，Skill 会报告 `PARTIAL` 或 `NOT_VERIFIED`，不会用额外 CLI 进程伪装成 Luna 子 Agent。
-
-## 安装
-
-### 使用 Skill Installer
-
-在 Codex 中调用 `$skill-installer`，并让它安装：
+最短口令仍是 **省额度**，或显式调用：
 
 ```text
-https://github.com/Yue-ai-ops/run-sol-luna/tree/main/skills/run-sol-luna
+$yue-task-routing 完成当前目标，优先直接执行，需要具体外援时再调用。
 ```
 
-### 手动安装
+- 已选 Astra：可以直接把复杂工作做完，不强制退回 Sol 规划、Luna 执行。
+- 日常省额度：Luna Max 保留为已有实测支持的经济选项；不把另一档 Luna 当成 Max。
+- Terra、Sol：尊重用户选择；Terra 不再锁死 xhigh，也不自动充当 Luna 替代品。
+- 独立子任务才考虑委派，具体难题才咨询；子 Agent 返回结果不等于父任务已完成。
+- 中途换模型：恢复目标、有效工作和一个下一步，不重做普通测试。
+- **额度即将重置**：只做已有且已授权的高价值任务，没有任务就停。Fast 需明确要求并实际可用。
 
-```bash
-git clone https://github.com/Yue-ai-ops/run-sol-luna.git
-mkdir -p ~/.agents/skills
-cp -R run-sol-luna/skills/run-sol-luna ~/.agents/skills/run-sol-luna
-```
+默认保持当前执行者。模型推荐与推理投入分开判断，Ultra 不与并行数量绑定。Skill 不能自动切换主模型、启用 Fast、绕过原生接口限制，也不保证多 Agent 比单模型省。
 
-如果安装后没有立即出现，重启 Codex。
+## 安装与升级
 
-## 使用
-
-最短触发方式：
+本次发布在功能分支，尚未合入 main。让 `$skill-installer` 安装以下目录：
 
 ```text
-省额度
+https://github.com/Yue-ai-ops/run-sol-luna/tree/codex/rename-budget-worker-skill/skills/yue-task-routing
 ```
 
-可以直接放进任务里：
+也可将该分支的 `skills/yue-task-routing` 复制到个人 `~/.agents/skills/`。升级时只保留一个有效安装：移走旧 `run-sol-luna` 或 `run-sol-budget-worker` 安装，避免同时加载旧规则。保留自己的未同步修改，不盲目覆盖。新任务中检查 `$yue-task-routing`；列表未刷新时重新打开应用。旧名称仍可作为自然语言线索，不保证旧 `$` 选择器别名有效。
 
-```text
-省额度，检查这个项目当前状态并告诉我唯一下一步。
-```
+## 为什么没有更多流程
 
-也可以显式调用：
+入口只规定目标、责任、委派和交接；[模型建议](skills/yue-task-routing/references/model-choices.md)单独更新。交接和重置细则按需读取。不给每个模型建立角色层，不给普通任务增加审批或重复审查。安全、数据保护和真实生产授权仍遵循项目规则。
 
-```text
-$run-sol-luna 修复这个测试失败，完成后由主任务独立验收。
-```
+采用 [OpenAI agent patterns](https://github.com/openai/openai-agents-python/blob/main/examples/agent_patterns/README.md) 中“有界调用”和“真正交接”的区别；无需安装新 Agent 框架。
 
-## 适合的任务
+公开费用和模型定位不是 Yue 工作现场的胜负结论。小样本验证不等于生产验收，也不能推算共享周额度；具体推荐保留实验性质。
 
-- 状态审计、证据提取和材料对账；
-- 日报、周报和结构化汇报初稿；
-- 重复测试、日志分析和批量检查；
-- 边界明确、修改范围固定并且有客观测试的编码任务；
-- 两个互不写同一文件、能够独立验收的并行子任务。
-
-不适合直接委派的任务：架构最终决策、跨主机或运行时身份判断、生产部署、重启、安全恢复、密钥处理、不可逆操作、真实外发和最终验收。
-
-## 工作原则
-
-子 Agent 的“完成”只是待核验的汇报，不是事实。主任务必须回看当前文件、Git 状态、测试、回执或运行时证据，才能宣布任务完成。
-
-## 作者与许可
-
-Original workflow by **Yue**. Public reusable edition maintained as part of Yue's personal digital assets.
-
-Released under the [MIT License](LICENSE).
+Released under the [MIT License](LICENSE). Original workflow by **Yue**.

@@ -1,6 +1,0 @@
-interface:
-  display_name: "Run Sol + Luna by Yue"
-  short_description: "说“省额度”，由 Sol 规划验收、Luna Max 执行"
-  default_prompt: "使用 $run-sol-luna 省额度完成当前任务；默认 Sol high 负责规划和验收，1 个 Luna Max 执行边界清晰的子任务。"
-policy:
-  allow_implicit_invocation: true
