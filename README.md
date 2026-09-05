@@ -1,109 +1,42 @@
-# Run Sol + Budget Worker
+# Yue Task Routing · 省额度
 
-由 **Yue** 创建的 Codex 额度工作流：把 Luna Max 当作默认执行者；Yue 明确选择时也可由 Terra xhigh 独立执行；Sol 只处理高价值方案、判断和一次窄审查。额度即将重置时，也只把容量用在已有、已授权且能验收的工作上。目标是获得真实结果，而不是制造编排仪式或为了消耗额度创造工作。
+Original workflow by **Yue**. Yue 的个人数字资产，MIT 开源。
 
-这是 Yue 的个人数字资产，现以 MIT License 向社区开放。
+由 `run-sol-budget-worker` / `run-sol-luna` 升级而来。仓库地址不变；Skill 改名为 `yue-task-routing`，以后换模型不再换流程名字。
 
-## 默认路线
+## 怎么用
 
-- 当前任务本来就是 Luna Max：直接跑到目标完成，不额外套一层 Agent 或 Sol 复核；
-- 当前任务是 Sol，且原生接口支持 Luna 子 Agent：先生成当前目标的交接，再明确启动 `gpt-5.6-luna + max`；
-- Luna Max 被接口拒绝：不反复重试、不使用其他 Luna 推理档，也不自动改用 Terra；建议直接把当前任务切换到 Luna Max；
-- Terra 只在使用者明确指定、或当前任务已经确认是 Terra xhigh 且要求继续时使用；必须是 `gpt-5.6-terra + xhigh`，不会静默换成其他档位；
-- 中大型里程碑、架构决定或高风险验收：可让 Sol 做一次只读窄审查，Luna 仍是执行者；
-- 明确说“额度即将重置”：只冲刺已有 `READY` 高价值任务，不拿低价值清理填满额度。
-
-无论额度充足还是紧张，执行默认交给 Luna Max。Terra xhigh 是 Yue 明确选择的替代执行者，不假定比 Luna Max 更省额度。Sol high 用于合格的高价值方案、判断或审查，max 只留给最困难或后果重大的单项工作；Ultra 只有在至少两条真正独立的工作流可以并行时才成立，不为普通工作预先设计证据门。
-
-## 为什么这样设计
-
-子 Agent 会产生自己的上下文和工具消耗，多 Agent 并不天然省额度。当前已经是 Luna Max 时直接执行最省；必须从 Sol 启动时，只开一个 Luna Max，并把“用户真正要完成什么、已经完成什么、下一步是什么”交接过去。Luna 自己做正常验证，Sol 不再重复检查，除非 Luna 明确遇到高风险冲突。
-
-Fast 只是更快且消耗额度更高的速度设置，不是质量档位。只有使用者明确要求加速消耗即将失效的额度、且当前界面确实支持时才使用。
-
-## 安装
-
-在 Codex 中调用 `$skill-installer`，安装：
+最短口令仍是 **省额度**，或显式调用：
 
 ```text
-https://github.com/Yue-ai-ops/run-sol-luna/tree/main/skills/run-sol-budget-worker
+$yue-task-routing 完成当前目标，优先直接执行，需要具体外援时再调用。
 ```
 
-也可以手动复制：
+- 已选 Astra：可以直接把复杂工作做完，不强制退回 Sol 规划、Luna 执行。
+- 日常省额度：Luna Max 保留为已有实测支持的经济选项；不把另一档 Luna 当成 Max。
+- Terra、Sol：尊重用户选择；Terra 不再锁死 xhigh，也不自动充当 Luna 替代品。
+- 独立子任务才考虑委派，具体难题才咨询；子 Agent 返回结果不等于父任务已完成。
+- 中途换模型：恢复目标、有效工作和一个下一步，不重做普通测试。
+- **额度即将重置**：只做已有且已授权的高价值任务，没有任务就停。Fast 需明确要求并实际可用。
 
-```bash
-git clone https://github.com/Yue-ai-ops/run-sol-luna.git
-mkdir -p ~/.agents/skills
-cp -R run-sol-luna/skills/run-sol-budget-worker ~/.agents/skills/run-sol-budget-worker
-```
+默认保持当前执行者。模型推荐与推理投入分开判断，Ultra 不与并行数量绑定。Skill 不能自动切换主模型、启用 Fast、绕过原生接口限制，也不保证多 Agent 比单模型省。
 
-如果安装后没有立即出现，重启 Codex。
+## 安装与升级
 
-## 使用
-
-最短触发方式：
+本次发布在功能分支，尚未合入 main。让 `$skill-installer` 安装以下目录：
 
 ```text
-省额度
+https://github.com/Yue-ai-ops/run-sol-luna/tree/codex/rename-budget-worker-skill/skills/yue-task-routing
 ```
 
-重置冲刺的精确触发方式：
+也可将该分支的 `skills/yue-task-routing` 复制到个人 `~/.agents/skills/`。升级时只保留一个有效安装：移走旧 `run-sol-luna` 或 `run-sol-budget-worker` 安装，避免同时加载旧规则。保留自己的未同步修改，不盲目覆盖。新任务中检查 `$yue-task-routing`；列表未刷新时重新打开应用。旧名称仍可作为自然语言线索，不保证旧 `$` 选择器别名有效。
 
-```text
-额度即将重置
-```
+## 为什么没有更多流程
 
-可以直接写进任务：
+入口只规定目标、责任、委派和交接；[模型建议](skills/yue-task-routing/references/model-choices.md)单独更新。交接和重置细则按需读取。不给每个模型建立角色层，不给普通任务增加审批或重复审查。安全、数据保护和真实生产授权仍遵循项目规则。
 
-```text
-省额度，把这个目标跑到验收通过；遇到生产、密钥或真实外发再找我。
-```
+采用 [OpenAI agent patterns](https://github.com/openai/openai-agents-python/blob/main/examples/agent_patterns/README.md) 中“有界调用”和“真正交接”的区别；无需安装新 Agent 框架。
 
-也可以显式调用：
+公开费用和模型定位不是 Yue 工作现场的胜负结论。小样本验证不等于生产验收，也不能推算共享周额度；具体推荐保留实验性质。
 
-```text
-$run-sol-budget-worker 修复这个测试失败并给出可复核证据。
-```
-
-Skill 不会自动切换当前任务的主模型、启用 Fast，也不能绕过接口对 Luna 子 Agent 的限制。Luna 路线只接受 `gpt-5.6-luna + max`；Terra 路线只接受 Yue 明确选择的 `gpt-5.6-terra + xhigh`。它选择以下八条路线之一：`LUNA_MAX_DIRECT`、`SOL_HANDOFF_TO_LUNA_MAX`、`LUNA_WITH_SOL_ADVICE`、`MODEL_SWITCH_RECOVERY`、`SWITCHBACK_GAP_RECOVERY`、`RESET_WINDOW_SPRINT`、`LUNA_MAX_UNAVAILABLE`、`TERRA_EXPLICIT`。
-
-## 额度重置冲刺
-
-只有精确出现“额度即将重置”才进入冲刺；“额度有点少”“最近用量很高”都不会误触发。现有工作先分成：
-
-- `READY`：高价值、已授权、没有阻塞、有明确验收；
-- `BLOCKED`：需要凭据、人工输入、外部授权或前置依赖；
-- `LOW_VALUE`：重复测试、可有可无的文档、未请求的抽象或纯粹为了耗额度的工作。
-
-只执行 `READY`。单一困难方案或审查可用 Sol high/max；至少两条真正独立的 `READY` 工作流才允许 Ultra。重置到点、没有 `READY`、遇到现有权限边界或继续投入价值过低时立即停止，并留下交接。
-
-## 中途切换与交接
-
-模型切换不是重新开工。切换时只做一次最小现场刷新：当前目标和验收、项目/工作区与分支、相关主机或运行时、已验证事实、未验证事项和下一步动作。
-
-- Sol → Luna：Sol 先交接，Luna Max 成为唯一执行者；不把完整目标缩成一张局部证据清单。
-- Luna → Sol：只有一个具体高风险问题或合格的高价值里程碑才请 Sol 给建议/审查；Sol 最多给 3 个实质问题，不改文件、不重跑普通测试、不接管任务。
-- Sol → Luna → Sol：使用 T0（最后可信的 Sol 状态）、T1（Luna 实际完成的工作）、T2（当前现场）对账，并逐项标记 `KEEP`、`VERIFY`、`REWORK` 或 `DROP`。
-- 直接在模型选择器切换：先恢复最近交接，继续有效工作，不因换模型重新规划整个项目。
-
-Skill 优先更新已有项目交接文件；只有长周期项目没有合适位置时才创建一个 `AGENT_HANDOFF.md`，不会每次切换都生成新文件。
-
-## 适合的任务
-
-- 状态审计、证据提取、日报周报和方案材料；
-- 重复测试、日志分析、固定问集、批量检查；
-- 浏览器录入、后台配置、可恢复的服务联调；
-- 范围明确且有客观测试的编码和多文件实现；
-- 长时间但目标清楚、允许按证据逐步推进的执行任务。
-
-需要 Sol 保留最终判断的事项包括：架构承诺、冲突中的主机或运行时身份、生产部署和重启、安全恢复、Secrets、不可逆操作、重要真实外发及最终高风险验收。普通小改、日志、浏览器操作和固定测试不会自动增加 Sol 审查。
-
-## 工作纪律
-
-流程不写固定六行任务卡，也不要求 Sol 重做普通任务。交接保存状态而不是重写计划；Luna 继承可用上下文、自主执行并完成正常验证；现有项目、权限和安全边界继续有效，但不再被重复包装成一套新证据门。
-
-## 作者与许可
-
-Original workflow by **Yue**. Public reusable edition maintained as part of Yue's personal digital assets.
-
-Released under the [MIT License](LICENSE).
+Released under the [MIT License](LICENSE). Original workflow by **Yue**.

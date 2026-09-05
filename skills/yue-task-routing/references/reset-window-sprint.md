@@ -1,6 +1,6 @@
 # Reset-window Sprint
 
-Read this reference only when the user includes the exact phrase “额度即将重置”. The goal is to convert genuinely expiring capacity into valuable completed work, not to maximize token burn.
+Read this reference when Yue explicitly asks to use expiring capacity, including “额度即将重置”, not when quoting or discussing the phrase. Aim for valuable completed work before the stated reset, not maximum token burn.
 
 ## Preconditions
 
@@ -8,6 +8,7 @@ Read this reference only when the user includes the exact phrase “额度即将
 - Use only work already requested, already authorized, or explicitly selected by the user.
 - Preserve all project, host, Git, safety, external-send, and human-only gates.
 - If timing, model availability, or Fast availability cannot be confirmed, state that rather than pretending.
+- Check actual account limits when timing matters. Do not redeem a reset or enable paid speed without explicit authorization.
 
 ## Triage the existing backlog
 
@@ -21,21 +22,13 @@ Execute `READY` work only. Prioritize by business value, time-to-completion befo
 
 ## Choose investment by task shape
 
-- One clear execution task: keep Luna Max when it can meet acceptance.
-- One difficult quality-first plan, decision, or focused review: use Sol high; use max only when the difficulty or consequence justifies it.
-- Two or more genuinely independent `READY` workstreams: Ultra may be proposed or used when supported and likely to improve wall-clock completion. Shared state, sequential dependencies, or one task split into ceremonial pieces do not qualify.
+- Keep the current capable model unless a different choice offers material benefit; consult [model-choices.md](model-choices.md) when needed.
+- Choose reasoning effort by difficulty and observed quality, separately from worker count. Ultra does not require multiple streams, nor does expiring quota automatically justify Ultra.
+- Parallelize only genuinely independent `READY` workstreams when authorized and likely to improve completion. Shared state and sequential dependencies do not qualify merely because a stronger effort is selected.
 - Fast: enable only when the user explicitly asks to spend the expiring quota faster and the interface visibly supports it. Fast changes speed and quota rate, not the quality tier.
 
 ## Stop conditions
 
 Stop when the reset time arrives, no `READY` work remains, the next action hits an existing boundary, or additional work would be lower value than preserving a clean handoff. Do not start speculative projects, generate unused engineering packages, add redundant tests, or expand architecture merely because quota remains.
 
-Report:
-
-```text
-Route: RESET_WINDOW_SPRINT
-Ready work completed:
-Blocked or deliberately skipped:
-Model / effort / speed actually confirmed:
-Remaining handoff:
-```
+Report completed results, meaningful blockers, and remaining handoff in plain language. Mention confirmed model or timing only when useful.

@@ -1,6 +1,6 @@
 # Handoff and Recovery
 
-Read this reference only when execution ownership changes, the model selector changes, or Sol → Luna → Sol continuity needs repair.
+Read this reference only when execution ownership changes, the model selector changes, or continuity needs repair. Apply it to any model, without fixed job titles.
 
 ## Minimal reality refresh
 
@@ -16,7 +16,7 @@ For a small textual task, keep this in context rather than creating a file.
 
 ## Handoff card
 
-Prefer an existing `HANDOFF_CARD.md`, `PROJECT_STATE.md`, or equivalent section. For a long cross-session task with no suitable home, create at most one `AGENT_HANDOFF.md`; do not create a file per model switch. Keep it within 300–800 words, up to 1200 only for complex recovery.
+Keep an ordinary in-task switch in context without creating a document. When durable cross-session handoff is needed, prefer an existing `HANDOFF_CARD.md`, `PROJECT_STATE.md`, or equivalent section. For a long task with no suitable home, create at most one `AGENT_HANDOFF.md`. Use only the template sections that matter; aim below 300 words and add detail only for a material recovery gap.
 
 ```markdown
 # Agent Handoff Card
@@ -57,12 +57,12 @@ For `MODEL_SWITCH_RECOVERY`:
 3. `continue` if aligned, `recover` if context is incomplete, and stop only for a real authorization or material-state conflict.
 4. Reuse completed work; do not restart project planning because the model changed.
 
-## Sol → Luna → Sol switchback
+## Switchback or continuity gap
 
 For `SWITCHBACK_GAP_RECOVERY`, reconcile:
 
-- **T0 — Last trusted Sol state:** accepted outcome, decisions, completed evidence, and boundaries before the switch.
-- **T1 — Luna state:** what Luna actually ran, model/effort if known, outputs and receipts, and its real assigned scope.
+- **T0 — Last trusted earlier state:** accepted outcome, decisions, completed evidence, and boundaries before the switch.
+- **T1 — Intervening work:** what the intervening agent actually ran, model/effort if known, outputs and receipts, and its real assigned scope.
 - **T2 — Current reality:** fresh worktree/host/runtime and current user-visible state; the handoff alone is never T2.
 
 Classify each material item as `KEEP`, `VERIFY`, `REWORK`, or `DROP`. Preserve valid work, recheck only changeable facts, repair a narrowed task definition, and discard stale assumptions or false completion claims. Issue one recovered handoff and name the next sole owner.

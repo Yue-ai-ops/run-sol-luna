@@ -1,6 +1,0 @@
-interface:
-  display_name: "Run Sol + Luna Handoff by Yue"
-  short_description: "省额度或重置冲刺：Luna 执行，Sol 做窄判断"
-  default_prompt: "使用 $run-sol-budget-worker 完成当前目标：平时由 Luna Max 执行，Sol 只做高价值方案、判断或一次窄审查；我说“额度即将重置”时，只冲刺已有且已授权的高价值任务。"
-policy:
-  allow_implicit_invocation: true
